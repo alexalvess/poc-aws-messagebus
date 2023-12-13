@@ -23,12 +23,10 @@ function createSnsTopic(topicName) {
 }
 
 function subscribeSnsTopicInQueue(topicName, queueName) {
-    const queueAttributes = sqsInfra.getQueueAttributes(queueName);
-
     const params = {
         Protocol: 'sqs',
         TopicArn: `arn:aws:sns:eu-west-2:000000000000:${topicName}`,
-        Endpoint: queueAttributes.QueueArn,
+        Endpoint: `arn:aws:sqs:eu-west-2:000000000000:${queueName}`,
     };
 
     sns.subscribe(params, (err, data) => {

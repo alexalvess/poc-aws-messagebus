@@ -21,24 +21,4 @@ function createQueue(queueName) {
   });
 }
 
-function getQueueAttributes(queueName) {
-  const params = {
-    QueueUrl: `http://sqs.eu-west-2.localhost.localstack.cloud:4566/000000000000/${queueName}`,
-    AttributeNames: ['All'],
-  };
-
-  let attributes;
-
-  sqs.getQueueAttributes(params, (err, data) => {
-    if (err) {
-      console.error('Error when try to get queue attrs:', err);
-    } else {
-      console.log('Queue attributes:', data.Attributes);
-      attributes = data.Attributes;
-    }
-  });
-
-  return attributes;
-}
-
-module.exports = { createQueue, getQueueAttributes }
+module.exports = { createQueue }
