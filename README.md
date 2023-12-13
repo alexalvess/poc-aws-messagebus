@@ -1,6 +1,15 @@
-## 💡 About
+# 💡 About
+The main objective of this cloud-native project is to represent how can we work with AWS SNS (Simple Notification Service) and SQS (Simple Queue Service) as a **Message Broker** using NodeJS in a EDA (Event-Driven Architecture)
+
+#### Main functionalities
+* Create a SQS queue
+* Create a SNS topic
+* Subscriber a SNS topic in a SQS queue
+* Send messages in a SNS topic and/or SQS queue
+* Consume messages by SQS queue
 
 ## 🔧 How works
+
 
 ### 🖥️ Running
 
@@ -26,7 +35,7 @@ And, finally, just run the `npm start` to execute index.js file
 
 ---
 
-#### 🔧 Some Useful Commands
+### 🔧 Some Useful Commands
 
 * Create queues
 
@@ -54,7 +63,7 @@ aws sns list-topics --profile localstack
 
 ---
 
-### References
+## References
 
 * https://dev.to/flflima/rodando-sqs-localmente-com-localstack-3nap
 * https://docs.localstack.cloud/user-guide/aws/sns/
