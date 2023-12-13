@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "start_sns": "node src/sns.operation.js",
-    "create": "node create.js"
+    "start": "node src/index.js"
   },
   "keywords": [],
   "author": "",
