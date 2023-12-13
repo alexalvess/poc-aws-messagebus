@@ -7,14 +7,14 @@ aws.config.update({
 
 const sqs = new aws.SQS();
 
-function sendMessageQueue(queueName) {
+function sendMessageQueue(queueName, contentMessage) {
     const currentDate = new Date();
     const futureDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDay() + 2, 15, 0, 0)
     const diffDate = new Date(futureDate.getTime() - currentDate.getTime());
 
     const params = {
         DelaySeconds: diffDate.getSeconds(), // Delayed message
-        MessageBody: "Hello SQS!",
+        MessageBody: contentMessage,
         QueueUrl: `http://sqs.eu-west-2.localhost.localstack.cloud:4566/000000000000/${queueName}`
     };
 
