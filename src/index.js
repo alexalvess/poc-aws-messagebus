@@ -11,26 +11,50 @@ const updateInventoryStatusQueueName = 'update-inventory-status-queue';
 
 const increaseInventoryTopicName = 'increase-inventory-topic';
 
-// sqsInfra.createQueue(warehouseDelayedQueueName);
-// sqsInfra.createQueue(increaseInventoryQueueName);
-// sqsInfra.createQueue(updateInventoryStatusQueueName);
+execute();
 
-// snsInfra.createSnsTopic(increaseInventoryTopicName);
+async function execute() {
+    await createQueuesAndTopics();
+    await subscribeTopicsInQueues();
+    await throwMessages();
+    consumeMessages();
+}
 
-snsInfra.subscribeSnsTopicInQueue('create-warehouse-topic', 'warehouse');
-// snsInfra.subscribeSnsTopicInQueue({
-//     topicName: increaseInventoryTopicName,
-//     queueName: updateInventoryStatusQueueName
-// });
+async function createQueuesAndTopics() {
+    sqsInfra.createQueue(warehouseDelayedQueueName);
+    sqsInfra.createQueue(increaseInventoryQueueName);
+    sqsInfra.createQueue(updateInventoryStatusQueueName);
 
-// Send directly message to a queue
-// sqsService.sendMessageQueue(warehouseDelayedQueueName, 'SQS DIRECT MESSAGE!');
+    snsInfra.createSnsTopic(increaseInventoryTopicName);
 
-// Just one publishing to broadcast the message to all consumers
-// snsService.publishMessage(increaseInventoryTopicName, 'SNS BROADCAST MESSAGE!');
+    await sleep(500);
+}
 
-// Each service can consume specific queues
-// sqsService.consumeMessageQueue(warehouseDelayedQueueName);
+async function subscribeTopicsInQueues() {
+    snsInfra.subscribeSnsTopicInQueue(increaseInventoryTopicName, increaseInventoryQueueName);
+    snsInfra.subscribeSnsTopicInQueue(increaseInventoryTopicName, updateInventoryStatusQueueName);
 
-// sqsService.consumeMessageQueue(increaseInventoryQueueName);
-// sqsService.consumeMessageQueue(updateInventoryStatusQueueName);
+    await sleep(500);
+}
+
+async function throwMessages() {
+    // Send directly message to a queue
+    sqsService.sendMessageQueue(warehouseDelayedQueueName, 'SQS DIRECT MESSAGE!');
+
+    // Just one publishing to broadcast the message to all consumers
+    snsService.publishMessage(increaseInventoryTopicName, 'SNS BROADCAST MESSAGE!');
+
+    await sleep(500);
+}
+
+function consumeMessages() {
+    // Each service can consume specific queues
+    sqsService.consumeMessageQueue(warehouseDelayedQueueName);
+
+    sqsService.consumeMessageQueue(increaseInventoryQueueName);
+    sqsService.consumeMessageQueue(updateInventoryStatusQueueName);
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

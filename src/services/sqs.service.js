@@ -8,12 +8,8 @@ aws.config.update({
 const sqs = new aws.SQS();
 
 function sendMessageQueue(queueName, contentMessage) {
-    const currentDate = new Date();
-    const futureDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDay() + 2, 15, 0, 0)
-    const diffDate = new Date(futureDate.getTime() - currentDate.getTime());
-
     const params = {
-        DelaySeconds: diffDate.getSeconds(), // Delayed message
+        DelaySeconds: 20,
         MessageBody: contentMessage,
         QueueUrl: `http://sqs.eu-west-2.localhost.localstack.cloud:4566/000000000000/${queueName}`
     };
@@ -42,7 +38,15 @@ function consumeMessageQueue(queueName) {
     }, (err, data) => {
         if (err) console.log('Receive error when try to consume', err);
         else {
-            console.log(data.Messages);
+            console.log('Message consumed', data.Messages);
+
+            sqs.deleteMessage({
+                QueueUrl: `http://sqs.eu-west-2.localhost.localstack.cloud:4566/000000000000/${queueName}`,
+                ReceiptHandle: data.Messages[0].ReceiptHandle
+            }, (err, _) => {
+                if(err) console.log('Error when purge message');
+                else console.log('Message deleted');
+            })
         }
     });
 }

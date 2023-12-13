@@ -38,6 +38,4 @@ function subscribeSnsTopicInQueue(topicName, queueName) {
     });
 }
 
-
-
 module.exports = { createSnsTopic, subscribeSnsTopicInQueue };
