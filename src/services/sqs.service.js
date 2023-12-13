@@ -37,18 +37,24 @@ function consumeMessageQueue(queueName) {
         QueueUrl: `http://sqs.eu-west-2.localhost.localstack.cloud:4566/000000000000/${queueName}`
     }, (err, data) => {
         if (err) console.log('Receive error when try to consume', err);
-        else {
-            console.log('Message consumed', data.Messages);
+        else if(data.Messages.length > 0) {
+            console.log(`Message consumed from ${queueName}`, data.Messages);
 
-            sqs.deleteMessage({
-                QueueUrl: `http://sqs.eu-west-2.localhost.localstack.cloud:4566/000000000000/${queueName}`,
-                ReceiptHandle: data.Messages[0].ReceiptHandle
-            }, (err, _) => {
-                if(err) console.log('Error when purge message');
-                else console.log('Message deleted');
-            })
+            if(data.Messages.length > 0) {
+                ackMessage(queueName, data.Messages[0]?.ReceiptHandle);
+            }
         }
     });
+}
+
+function ackMessage(queueName, receiptHandle){ 
+    sqs.deleteMessage({
+        QueueUrl: `http://sqs.eu-west-2.localhost.localstack.cloud:4566/000000000000/${queueName}`,
+        ReceiptHandle: receiptHandle
+    }, (err, _) => {
+        if(err) console.log('Error when purge message');
+        else console.log(`Message deleted from ${queueName}`);
+    })
 }
 
 module.exports = { sendMessageQueue, consumeMessageQueue }
