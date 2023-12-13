@@ -18,7 +18,10 @@ aws sqs list-queues --endpoint-url http://localhost:4566 --profile localstack
 aws sns create-topic --endpoint-url http://localhost:4566 --name [YOUR_TOPIC] --profile localstack
 ```
 
+* List topics
+
 ```bash
+aws sns list-topics --profile localstack
 ```
 
 ---
