@@ -4,7 +4,6 @@ const sqsService = require('./services/sqs.service');
 const snsInfra = require('./infra/sns.infra');
 const snsService = require('./services/sns.service');
 
-// For first time
 const warehouseDelayedQueueName = 'warehouse-delayed-queue';
 const increaseInventoryQueueName = 'increase-inventory-queue';
 const updateInventoryStatusQueueName = 'update-inventory-status-queue';
