@@ -10,6 +10,23 @@ The main objective of this cloud-native project is to represent how can we work 
 
 ## 🔧 How works
 
+![SNS and SQS diagram](./.assets/imgs/sns_sqs_diagram.png)
+
+* Capabilities:
+    * Delayed messages/queues
+    * Broadcast messages
+    * Direct messages
+    * DLQ
+
+#### ⚠️ Attentions
+
+* Every SNS topic needs a destination (and protocol reference), like:
+    * AWS SQS
+    * AWS SES
+    * AWS Lambda
+    * HTTP/HTTPS
+    * Mobile Push
+    * Email
 
 ### 🖥️ Running
 
