@@ -16,7 +16,7 @@ async function execute() {
     await createQueuesAndTopics();
     await subscribeTopicsInQueues();
     await throwMessages();
-    await consumeMessages();
+    consumeMessages();
 }
 
 async function createQueuesAndTopics() {
@@ -46,14 +46,12 @@ async function throwMessages() {
     await sleep(500);
 }
 
-async function consumeMessages() {
+function consumeMessages() {
     // Each service can consume specific queues
-    const consumerPromise1 = sqsService.consumeMessages(warehouseDelayedQueueName);
+    sqsService.consumeMessages(warehouseDelayedQueueName);
 
-    const consumerPromise2 = sqsService.consumeMessages(increaseInventoryQueueName);
-    const consumerPromise3 = sqsService.consumeMessages(updateInventoryStatusQueueName);
-
-    await Promise.all([consumerPromise1, consumerPromise2, consumerPromise3]);
+    sqsService.consumeMessages(increaseInventoryQueueName);
+    sqsService.consumeMessages(updateInventoryStatusQueueName);
 }
 
 function sleep(ms) {
