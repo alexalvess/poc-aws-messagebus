@@ -8,17 +8,28 @@ aws.config.update({
 const sqs = new aws.SQS();
 
 function createQueue(queueName) {
-  const params = {
-    QueueName: queueName,
-  };
-
-  sqs.createQueue(params, (err, data) => {
+  sqs.createQueue({
+      QueueName: queueName
+    }, (err, data) => {
     if (err) {
       console.error('Error to create queue:', err);
     } else {
+      createDlqQueue(queueName);
       console.log('Queue created:', data.QueueUrl);
     }
   });
+}
+
+function createDlqQueue(queueName) {
+  sqs.createQueue({
+    QueueName: `${queueName}-dlq`
+  }, (err, data) => {
+  if (err) {
+    console.error('Error to create queue:', err);
+  } else {
+    console.log('Queue created:', data.QueueUrl);
+  }
+});
 }
 
 module.exports = { createQueue }
