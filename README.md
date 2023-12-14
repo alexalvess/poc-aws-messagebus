@@ -1,5 +1,7 @@
 # 💡 About
-The main objective of this cloud-native project is to represent how can we work with AWS SNS (Simple Notification Service) and SQS (Simple Queue Service) as a **Message Broker** using NodeJS in a EDA (Event-Driven Architecture)
+The main objective of this project is to represent how can we work with AWS SNS (Simple Notification Service) and SQS (Simple Queue Service) as a **Message Broker** using NodeJS in a EDA (Event-Driven Architecture)
+
+
 
 #### Main functionalities
 * Create a SQS queue
@@ -20,8 +22,10 @@ The main objective of this cloud-native project is to represent how can we work 
 
 #### ⚠️ Attentions
 
+* SNS and SQS works with HTTP/HTTPS protocol 
+    * 🚨 For this, is necessary to create a pooling to receive messages
 * Every SNS topic needs a destination (and protocol reference), like:
-    * AWS SQS
+    * AWS SQS ⬅️
     * AWS SES
     * AWS Lambda
     * HTTP/HTTPS

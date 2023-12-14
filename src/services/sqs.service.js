@@ -23,38 +23,54 @@ function sendMessageQueue(queueName, contentMessage) {
     });
 }
 
-function consumeMessageQueue(queueName) {
-    sqs.receiveMessage({
-        MaxNumberOfMessages: 5,
-        VisibilityTimeout: 20,
-        WaitTimeSeconds: 0,
-        AttributeNames: [
-            "SentTimestamp"
-        ],
-        MessageAttributeNames: [
-            "All"
-        ],
-        QueueUrl: `http://sqs.eu-west-2.localhost.localstack.cloud:4566/000000000000/${queueName}`
-    }, (err, data) => {
-        if (err) console.log('Receive error when try to consume', err);
-        else if(data.Messages.length > 0) {
-            console.log(`Message consumed from ${queueName}`, data.Messages);
+async function consumeMessages(queueName) {
+    while(true) {
+        try {
+            const params = {
+                MaxNumberOfMessages: 10,
+                VisibilityTimeout: 300,
+                WaitTimeSeconds: 5,
+                AttributeNames: [
+                    "All"
+                ],
+                MessageAttributeNames: [
+                    "All"
+                ],
+                QueueUrl: `http://sqs.eu-west-2.localhost.localstack.cloud:4566/000000000000/${queueName}`
+            };
 
-            if(data.Messages.length > 0) {
-                ackMessage(queueName, data.Messages[0]?.ReceiptHandle);
+            const response = await sqs.receiveMessage(params).promise();
+
+            if(response.Messages.length > 0) {
+                await proccessMessageBatch(response.Messages, queueName);
+            } else {
+                await waitUntilMessagesArrive(10);
+                console.log(`No messages received at ${queueName}, waiting...`);
             }
+        } catch (error) {
+            console.log(`Error receiving messages`, error);
         }
-    });
+    }
 }
 
-function ackMessage(queueName, receiptHandle){ 
-    sqs.deleteMessage({
-        QueueUrl: `http://sqs.eu-west-2.localhost.localstack.cloud:4566/000000000000/${queueName}`,
-        ReceiptHandle: receiptHandle
-    }, (err, _) => {
-        if(err) console.log('Error when purge message');
-        else console.log(`Message deleted from ${queueName}`);
-    })
+async function proccessMessageBatch(messages, queueName) {
+    for (const message of messages) {
+        try {
+            console.log(`Message consumed from`, message);
+            await sqs.deleteMessage({
+                QueueUrl: `http://sqs.eu-west-2.localhost.localstack.cloud:4566/000000000000/${queueName}`,
+                ReceiptHandle: message.ReceiptHandle
+            }).promise();
+            console.log(`Message deleted from ${queueName}`);
+        } catch (error) {
+            console.log(`Error processing message`, error);
+        }
+    }
 }
 
-module.exports = { sendMessageQueue, consumeMessageQueue }
+async function waitUntilMessagesArrive(pollingInterval) {
+    await new Promise((resolve) => setTimeout(resolve, pollingInterval));
+    return true;
+}
+
+module.exports = { sendMessageQueue, consumeMessages }

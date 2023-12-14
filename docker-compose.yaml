@@ -25,5 +25,5 @@ services:
     ports:
       - "3999:3999"
     environment:
-      - SQS_ENDPOINT_URL=http://sqs.eu-west-2.localhost.localstack.cloud:4566
+      - SQS_ENDPOINT_URL=http://localhost:4566
       - SQS_AWS_REGION=eu-west-2
