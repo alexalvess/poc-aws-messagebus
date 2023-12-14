@@ -19,6 +19,7 @@ The main objective of this project is to represent how can we work with AWS SNS 
     * Broadcast messages
     * Direct messages
     * DLQ
+    * Second-Level Resilience
 
 #### ⚠️ Attentions
 
