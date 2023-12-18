@@ -1,5 +1,6 @@
 const aws = require('aws-sdk');
 const { Consumer } = require('sqs-consumer');
+const eventBridgeService = require('./eventBridge.service');
 
 aws.config.update({
     endpoint: 'http://localhost:4566',
@@ -10,7 +11,7 @@ const sqs = new aws.SQS();
 
 function sendMessageQueue(queueName, contentMessage, sendParams) {
     const params = {
-        MessageBody: contentMessage,
+        MessageBody: JSON.stringify(contentMessage),
         MessageAttributes: {
             'RetryCount': {
                 DataType: 'Number',
@@ -30,13 +31,23 @@ function sendMessageQueue(queueName, contentMessage, sendParams) {
     });
 }
 
-function consumeMessages(queueName) {
+async function consumeMessages(queueName) {
     const consumer = Consumer.create({
         messageAttributeNames: [ 'All' ],
         queueUrl: `http://sqs.eu-west-2.localhost.localstack.cloud:4566/000000000000/${queueName}`,
         handleMessage: async message => {
             try {
-                console.log(`Message consumed from ${queueName}`, message.Body);
+                const body = JSON.parse(message.Body);
+                console.log(`Message consumed from ${queueName}`, body);
+
+                if(body.Message) {
+                    const messageContent = JSON.parse(body.Message);
+                    console.log('Message: ', messageContent);
+
+                    if(messageContent.id){
+                        await eventBridgeService.deleteEventBridgeRule(messageContent.id);
+                    }
+                }
             } catch (error) {
                 console.log('Error processing message: ', error.message);
                 executeSecondLevelResilience(queueName, message, 3);

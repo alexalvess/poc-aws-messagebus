@@ -38,23 +38,28 @@ async function subscribeTopicsInQueues() {
 }
 
 async function throwMessages() {
-    eventBridgeService.scheduleMessage(increaseInventoryTopicName, 'EVENT BRIDGE MESSAGE', 1);
+    // Schedule a message
+    await eventBridgeService.scheduleMessage(increaseInventoryTopicName, {message: '111=== EVENT BRIDGE ==='}, 1);
+    await eventBridgeService.scheduleMessage(increaseInventoryTopicName, {message: '444=== EVENT BRIDGE ==='}, 2);
+    await eventBridgeService.scheduleMessage(increaseInventoryTopicName, {message: '555=== EVENT BRIDGE ==='}, 1);
 
     // Send directly message to a queue
-    // sqsService.sendMessageQueue(warehouseDelayedQueueName, 'SQS DIRECT MESSAGE!', {});
+    sqsService.sendMessageQueue(warehouseDelayedQueueName, {message: '222=== SQS DIRECT! ===' }, {});
 
     // Just one publishing to broadcast the message to all consumers
-    // snsService.publishMessage(increaseInventoryTopicName, 'SNS BROADCAST MESSAGE!');
+    snsService.publishMessage(increaseInventoryTopicName, {message: '333=== SNS BROADCAST! ==='} );
 
     await sleep(500);
 }
 
 function consumeMessages() {
     // Each service can consume specific queues
-    sqsService.consumeMessages(warehouseDelayedQueueName);
+    const consumer1 = sqsService.consumeMessages(warehouseDelayedQueueName);
 
-    sqsService.consumeMessages(increaseInventoryQueueName);
-    sqsService.consumeMessages(updateInventoryStatusQueueName);
+    const consumer2 = sqsService.consumeMessages(increaseInventoryQueueName);
+    const consumer3 = sqsService.consumeMessages(updateInventoryStatusQueueName);
+
+    Promise.all([consumer1, consumer2, consumer3]);
 }
 
 function sleep(ms) {

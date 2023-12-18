@@ -10,7 +10,7 @@ const sns = new aws.SNS();
 function publishMessage(topicName, contentMessage) {
     const params = {
         TopicArn: `arn:aws:sns:eu-west-2:000000000000:${topicName}`,
-        Message: contentMessage,
+        Message: JSON.stringify(contentMessage),
     };
 
     sns.publish(params, (err, data) => {
