@@ -1,4 +1,5 @@
 const aws = require('aws-sdk');
+const uuid = require('uuid');
 
 aws.config.update({
     endpoint: 'http://localhost:4566',
@@ -15,7 +16,10 @@ function scheduleMessage(topicName, message, delayMinutes) {
             {
                 Source: 'custom.source',
                 DetailType: 'custom.detailType',
-                Detail: JSON.stringify({ data: 'TESTE 12345' }),
+                Detail: JSON.stringify({ 
+                    id: uuid.v4(),
+                    data: 'TESTE 12345' 
+                }),
                 EventBusName: 'default'
             }
         ]
