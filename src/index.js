@@ -3,6 +3,7 @@ const sqsService = require('./services/sqs.service');
 
 const snsInfra = require('./infra/sns.infra');
 const snsService = require('./services/sns.service');
+const eventBridgeService = require('./services/eventBridge.service');
 
 const warehouseDelayedQueueName = 'warehouse-delayed-queue';
 const increaseInventoryQueueName = 'increase-inventory-queue';
@@ -37,13 +38,13 @@ async function subscribeTopicsInQueues() {
 }
 
 async function throwMessages() {
+    eventBridgeService.scheduleMessage(increaseInventoryTopicName, 'EVENT BRIDGE MESSAGE', 1);
+
     // Send directly message to a queue
-    sqsService.sendMessageQueue(warehouseDelayedQueueName, 'SQS DIRECT MESSAGE!', {
-        DelaySeconds: 15
-    });
+    // sqsService.sendMessageQueue(warehouseDelayedQueueName, 'SQS DIRECT MESSAGE!', {});
 
     // Just one publishing to broadcast the message to all consumers
-    snsService.publishMessage(increaseInventoryTopicName, 'SNS BROADCAST MESSAGE!');
+    // snsService.publishMessage(increaseInventoryTopicName, 'SNS BROADCAST MESSAGE!');
 
     await sleep(500);
 }
@@ -52,8 +53,8 @@ function consumeMessages() {
     // Each service can consume specific queues
     sqsService.consumeMessages(warehouseDelayedQueueName);
 
-    // sqsService.consumeMessages(increaseInventoryQueueName);
-    // sqsService.consumeMessages(updateInventoryStatusQueueName);
+    sqsService.consumeMessages(increaseInventoryQueueName);
+    sqsService.consumeMessages(updateInventoryStatusQueueName);
 }
 
 function sleep(ms) {

@@ -11,7 +11,7 @@ services:
       - "127.0.0.1:53:53/udp" # DNS config (only required for Pro)
       - "127.0.0.1:443:443" # LocalStack HTTPS Gateway (only required for Pro)
     environment:
-      - SERVICES=sqs,sns
+      - SERVICES=sqs,sns,events
       - DEBUG=${DEBUG-}
       - PERSISTENCE=${PERSISTENCE-}
       - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}

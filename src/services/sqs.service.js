@@ -37,7 +37,6 @@ function consumeMessages(queueName) {
         handleMessage: async message => {
             try {
                 console.log(`Message consumed from ${queueName}`, message.Body);
-                throw new Error('Proposital error');
             } catch (error) {
                 console.log('Error processing message: ', error.message);
                 executeSecondLevelResilience(queueName, message, 3);
