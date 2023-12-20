@@ -22,20 +22,19 @@ function createSnsTopic(topicName) {
     });
 }
 
-function subscribeSnsTopicInQueue(topicName, queueName) {
+async function subscribeSnsTopicInQueue(topicName, queueName) {
     const params = {
         Protocol: 'sqs',
         TopicArn: `arn:aws:sns:eu-west-2:000000000000:${topicName}`,
         Endpoint: `arn:aws:sqs:eu-west-2:000000000000:${queueName}`,
     };
 
-    sns.subscribe(params, (err, data) => {
-        if (err) {
-            console.error('Error to create a subscriber:', err);
-        } else {
-            console.log('Subscriber created:', data.SubscriptionArn);
-        }
-    });
+    try {
+        await sns.subscribe(params).promise();
+        console.log('Subscriber created:', data.SubscriptionArn);
+    } catch (error) {
+        console.error('Error to create a subscriber:', error);
+    }
 }
 
 module.exports = { createSnsTopic, subscribeSnsTopicInQueue };

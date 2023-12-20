@@ -17,7 +17,7 @@ function publishMessage(topicName, contentMessage) {
         if (err) {
             console.error('Error to publish in a topic:', err);
         } else {
-            console.log('Message published:', data.MessageId);
+            console.log('\x1b[33m%s\x1b[0m', 'Message published:', data.MessageId);
         }
     });
 }

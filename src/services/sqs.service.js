@@ -26,7 +26,7 @@ function sendMessageQueue(queueName, contentMessage, sendParams) {
         if (err) {
             console.log(err);
         } else {
-            console.log(`Sent SQS message to ${queueName}: `, data.MessageId);
+            console.log('\x1b[33m%s\x1b[0m', `Sent SQS message to ${queueName}: `, data.MessageId);
         }
     });
 }
@@ -38,18 +38,19 @@ async function consumeMessages(queueName) {
         handleMessage: async message => {
             try {
                 const body = JSON.parse(message.Body);
-                console.log(`Message consumed from ${queueName}`, body);
 
                 if(body.Message) {
                     const messageContent = JSON.parse(body.Message);
-                    console.log('Message: ', messageContent);
-
-                    if(messageContent.id){
-                        await eventBridgeService.deleteEventBridgeRule(messageContent.id);
+                    if(messageContent.scheduleId){
+                        console.info('\x1b[36m%s\x1b[0m', `Message consumed from ${queueName}`, messageContent.scheduleId);
+                        await eventBridgeService.deleteEventBridgeRule(queueName, messageContent.scheduleId);
+                    }
+                    else {
+                        console.info('\x1b[36m%s\x1b[0m', `Message consumed from ${queueName}`, message.MessageId);
                     }
                 }
             } catch (error) {
-                console.log('Error processing message: ', error.message);
+                console.log('\x1b[31m%s\x1b[0m', `Error processing message from ${queueName}:`, error.message);
                 executeSecondLevelResilience(queueName, message, 3);
             }
         },
