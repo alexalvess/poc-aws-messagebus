@@ -12,7 +12,7 @@ The main objective of this project is to represent how can we work with AWS SNS 
 
 ## 🔧 How works
 
-![SNS and SQS diagram](./.assets/imgs/sns_sqs_diagram.png)
+![SNS and SQS diagram](./.assets/imgs/message-broker-diagram.png)
 
 * Capabilities:
     * Delayed messages/queues
