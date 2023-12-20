@@ -16,18 +16,16 @@ execute();
 async function execute() {
     await createQueuesAndTopics();
     await subscribeTopicsInQueues();
-    await throwMessages();
+    throwMessages();
     consumeMessages();
 }
 
 async function createQueuesAndTopics() {
-    sqsInfra.createQueue(warehouseDelayedQueueName);
-    sqsInfra.createQueue(increaseInventoryQueueName);
-    sqsInfra.createQueue(updateInventoryStatusQueueName);
+    await sqsInfra.createQueue(warehouseDelayedQueueName);
+    await sqsInfra.createQueue(increaseInventoryQueueName);
+    await sqsInfra.createQueue(updateInventoryStatusQueueName);
 
-    snsInfra.createSnsTopic(increaseInventoryTopicName);
-
-    await sleep(500);
+    await snsInfra.createSnsTopic(increaseInventoryTopicName);
 }
 
 async function subscribeTopicsInQueues() {
@@ -35,7 +33,7 @@ async function subscribeTopicsInQueues() {
     await snsInfra.subscribeSnsTopicInQueue(increaseInventoryTopicName, updateInventoryStatusQueueName);
 }
 
-async function throwMessages() {
+function throwMessages() {
     const currentDate = new Date();
     const futureDate = new Date(currentDate.getTime() + 60 * 1000);
 
@@ -56,8 +54,4 @@ function consumeMessages() {
 
     sqsService.consumeMessages(increaseInventoryQueueName, (message) => console.log(message));
     sqsService.consumeMessages(updateInventoryStatusQueueName);
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }

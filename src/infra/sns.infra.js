@@ -8,18 +8,13 @@ aws.config.update({
 
 const sns = new aws.SNS();
 
-function createSnsTopic(topicName) {
-    const params = {
-        Name: topicName,
-    };
-
-    sns.createTopic(params, (err, data) => {
-        if (err) {
-            console.error('Erro when try to create a topic:', err);
-        } else {
-            console.log('Topic created successfully:', data.TopicArn);
-        }
-    });
+async function createSnsTopic(topicName) {
+    try {
+        await sns.createTopic({ Name: topicName }).promise();
+        console.log('Topic created successfully:', topicName);
+    } catch (error) {
+        console.error('Erro when try to create a topic:', error.message);
+    }    
 }
 
 async function subscribeSnsTopicInQueue(topicName, queueName) {
