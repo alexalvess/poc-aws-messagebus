@@ -16,8 +16,8 @@ execute();
 async function execute() {
     await createQueuesAndTopics();
     await subscribeTopicsInQueues();
-    throwMessages();
     consumeMessages();
+    throwMessages();
 }
 
 async function createQueuesAndTopics() {
@@ -48,7 +48,7 @@ function throwMessages() {
     snsService.publishMessage(increaseInventoryTopicName, {message: '=== SNS BROADCAST! ==='} );
 }
 
-function consumeMessages() {
+async function consumeMessages() {
     // Each service can consume specific queues
     sqsService.consumeMessages(warehouseDelayedQueueName);
 

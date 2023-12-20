@@ -25,10 +25,10 @@ async function subscribeSnsTopicInQueue(topicName, queueName) {
     };
 
     try {
-        await sns.subscribe(params).promise();
-        console.log('Subscriber created:', data.SubscriptionArn);
+        const subscriber = await sns.subscribe(params).promise();
+        console.log('Subscriber created:', subscriber.SubscriptionArn);
     } catch (error) {
-        console.error('Error to create a subscriber:', error);
+        console.error('Error to create a subscriber:', error.message);
     }
 }
 
